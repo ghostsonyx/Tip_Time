@@ -7,16 +7,22 @@
     android:padding="16dp"
     tools:context=".MainActivity">
 
-    <EditText
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/cost_of_service"
         android:layout_width="160dp"
         android:layout_height="wrap_content"
-        android:autofillHints=""
         android:hint="@string/cost_of_service"
-        android:inputType="numberDecimal"
-        android:minHeight="48dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/cost_of_service_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:inputType="numberDecimal" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
         android:id="@+id/service_question"
@@ -28,7 +34,6 @@
 
     <RadioGroup
         android:id="@+id/tip_options"
-        android:checkedButton="@id/option_twenty_percent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -39,23 +44,47 @@
             android:id="@+id/option_twenty_percent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/amazing_20"/>
+            android:text="@string/amazing_20" />
 
         <RadioButton
             android:id="@+id/option_eighteen_percent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/good_18"/>
+            android:text="@string/good_18" />
 
         <RadioButton
             android:id="@+id/option_fifteen_percent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/okay_15"/>
+            android:text="@string/okay_15" />
+
+        <RadioButton
+            android:id="@+id/option_other_percent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/other" />
 
     </RadioGroup>
 
-    <Switch
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/option_other_edit"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:hint="@string/other"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tip_options">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/option_other_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:enabled="false"
+            android:inputType="number" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/round_up_switch"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -64,7 +93,7 @@
         android:text="@string/round_up_tip"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tip_options" />
+        app:layout_constraintTop_toBottomOf="@id/option_other_edit" />
 
     <Button
         android:id="@+id/calculate_button"
