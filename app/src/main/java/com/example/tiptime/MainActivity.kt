@@ -17,8 +17,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    private var tipPercentage = 0.00
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -65,18 +63,9 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        val tipPercentage = when(binding.tipOptions.checkedRadioButtonId) {
-            R.id.option_twenty_percent -> 0.20
-            R.id.option_eighteen_percent -> 0.18
-            R.id.option_fifteen_percent -> 0.15
-            R.id.option_other_percent -> binding.optionOtherEditText.text.toString().toDouble() / 100.00
-            else -> 0.00
-        }
+        val tipPercentage = getTipPercentage()
 
-        var tip = costOfService * tipPercentage
-
-        if (binding.roundUpSwitch.isChecked)
-            tip = ceil(costOfService * tipPercentage)
+        var tip = calculateTip(costOfService, tipPercentage)
 
         displayTip(tip)
     }
@@ -84,6 +73,16 @@ class MainActivity : AppCompatActivity() {
     private fun displayTip(tip: Double) {
         val formattedTip = NumberFormat.getCurrencyInstance().format(tip)
         binding.tipResult.text = getString(R.string.tip_amount, formattedTip)
+    }
+
+    private fun getTipPercentage(): Double {
+        return when(binding.tipOptions.checkedRadioButtonId) {
+            R.id.option_twenty_percent -> 0.20
+            R.id.option_eighteen_percent -> 0.18
+            R.id.option_fifteen_percent -> 0.15
+            R.id.option_other_percent -> binding.optionOtherEditText.text.toString().toDouble() / 100.00
+            else -> 0.00
+        }
     }
 
     private fun isTipPercentageKnown(): Boolean {
@@ -102,6 +101,15 @@ class MainActivity : AppCompatActivity() {
         }
 
         return (tipPercentage is Double)
+    }
+
+    private fun calculateTip(costOfService: Double, tipPercentage: Double): Double {
+        var tip = costOfService * tipPercentage
+
+        if (binding.roundUpSwitch.isChecked)
+            tip = ceil(costOfService * tipPercentage)
+
+        return tip
     }
 
     private fun isCalculateButtonAvailable() {
