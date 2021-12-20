@@ -1,9 +1,12 @@
 package com.example.tiptime
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
+import android.view.KeyEvent
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.RadioButton
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -23,15 +26,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // Check if cost of service changes to enable calculate button
-        binding.costOfServiceEditText.addTextChangedListener {
-            isCalculateButtonAvailable()
-        }
+        binding.costOfServiceEditText.addTextChangedListener { isCalculateButtonAvailable() }
 
         // check if other tip changes to enable calculate button
-        binding.optionOtherEditText.addTextChangedListener {
-            isCalculateButtonAvailable()
-        }
+        binding.optionOtherEditText.addTextChangedListener { isCalculateButtonAvailable() }
 
+        // check if radio button for tip was clicked, if so disable others
         binding.tipOptions.setOnCheckedChangeListener { radioGroup, checkedId ->
             when(binding.tipOptions.checkedRadioButtonId) {
                 R.id.option_twenty_percent -> binding.optionOtherEditText.isEnabled = false
@@ -43,9 +43,12 @@ class MainActivity : AppCompatActivity() {
             isCalculateButtonAvailable()
         }
 
-        binding.calculateButton.setOnClickListener {
-            calculateTip()
-        }
+        // calculate tip when calculate button is pressed
+        binding.calculateButton.setOnClickListener { calculateTip() }
+
+        // hide keyboard on enter key for editable text fields
+        binding.costOfServiceEditText.setOnKeyListener { view, keyCode, _ -> handleKeyEvent(view, keyCode) }
+        binding.optionOtherEditText.setOnKeyListener { view, keyCode, _ -> handleKeyEvent(view, keyCode) }
     }
 
     private fun calculateTip() {
@@ -65,7 +68,10 @@ class MainActivity : AppCompatActivity() {
 
         val tipPercentage = getTipPercentage()
 
-        var tip = calculateTip(costOfService, tipPercentage)
+        var tip = costOfService * tipPercentage
+
+        if (binding.roundUpSwitch.isChecked)
+            tip = ceil(costOfService * tipPercentage)
 
         displayTip(tip)
     }
@@ -103,16 +109,18 @@ class MainActivity : AppCompatActivity() {
         return (tipPercentage is Double)
     }
 
-    private fun calculateTip(costOfService: Double, tipPercentage: Double): Double {
-        var tip = costOfService * tipPercentage
-
-        if (binding.roundUpSwitch.isChecked)
-            tip = ceil(costOfService * tipPercentage)
-
-        return tip
-    }
-
     private fun isCalculateButtonAvailable() {
         binding.calculateButton.isEnabled = binding.costOfServiceEditText.text?.isNotEmpty() == true && isTipPercentageKnown()
+    }
+
+    private fun handleKeyEvent(view: View, keyCode: Int): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_ENTER) {
+            // Hide the keyboard
+            val inputMethodManager =
+                getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+            return true
+        }
+        return false
     }
 }
